@@ -218,6 +218,8 @@ function idb(cb){if(DB)return cb(DB);try{var r=indexedDB.open('recall_img',1);r.
 function putImg(id,u,cb){idb(function(d){if(!d)return cb(0);try{var t=d.transaction('i','readwrite');t.objectStore('i').put(u,id);t.oncomplete=function(){cb(1)};t.onerror=function(){cb(0)}}catch(e){cb(0)}})}
 function getImg(id,cb){idb(function(d){if(!d)return cb(null);try{var q=d.transaction('i').objectStore('i').get(id);q.onsuccess=function(){cb(q.result||null)};q.onerror=function(){cb(null)}}catch(e){cb(null)}})}
 function delImg(id){if(!id)return;idb(function(d){if(d)try{d.transaction('i','readwrite').objectStore('i').delete(id)}catch(e){}})}
+function pickFile(accept,cb){var o=document.getElementById('_pf');if(o)o.remove();var fi=document.createElement('input');fi.type='file';fi.id='_pf';if(accept)fi.accept=accept;fi.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none';fi.addEventListener('change',function(){var f=fi.files&&fi.files[0];if(f)cb(f);setTimeout(function(){fi.remove()},60000)});document.body.appendChild(fi);fi.click()}
+function readTextFile(f,ok){var fr=new FileReader();fr.onload=function(){ok(fr.result)};fr.onerror=function(){toast('Could not read that file')};fr.readAsText(f)}
 function shrink(file,cb){var fr=new FileReader();fr.onload=function(){var m=new Image();m.onload=function(){var s=Math.min(1,900/Math.max(m.width,m.height)),cv=document.createElement('canvas');cv.width=Math.round(m.width*s);cv.height=Math.round(m.height*s);cv.getContext('2d').drawImage(m,0,0,cv.width,cv.height);cb(cv.toDataURL('image/jpeg',.72))};m.onerror=function(){cb(null)};m.src=fr.result};fr.onerror=function(){cb(null)};fr.readAsDataURL(file)}
 function allImgIds(cs){var L=[];cs.forEach(function(c){if(c.qi)L.push(c.qi);if(c.ai)L.push(c.ai)});return L}
 function delImgs(cs){allImgIds(cs).forEach(delImg)}
@@ -283,8 +285,7 @@ document.addEventListener('click',function(e){
  else if(a==='pic'||a==='rmpic'){var cc=findC(EC),w=d.w;if(!cc)return;
   cc.q=$('#f1').value.trim()||cc.q;cc.a=$('#f2').value.trim()||cc.a;cc.o=$('#f3').value.split('\n').map(function(x){return x.trim()}).filter(Boolean);
   if(a==='rmpic'){delImg(cc[w+'i']);delete cc[w+'i'];save();cardSheet(EC);return}
-  var fi=document.createElement('input');fi.type='file';fi.accept='image/*';
-  fi.onchange=function(){var fl=fi.files&&fi.files[0];if(!fl)return;shrink(fl,function(u){if(!u){toast('Could not read that image');return}var id=cc[w+'i']||uid();putImg(id,u,function(okk){if(!okk){toast('Could not save the image in this browser');return}cc[w+'i']=id;save();cardSheet(EC)})})};fi.click()}
+  pickFile('image/*',function(fl){shrink(fl,function(u){if(!u){toast('Could not read that image');return}var id=cc[w+'i']||uid();putImg(id,u,function(okk){if(!okk){toast('Could not save the image in this browser');return}cc[w+'i']=id;save();cardSheet(EC)})})})}
  else if(a==='opt'){if(ST.mc){ST.mc.pick=+d.i;ST.f=true;render()}}
  else if(a==='chk'){var zz=ST.cz,vv=($('#cz')||{}).value||'';if(zz){zz.res=norm(vv)===norm(zz.word)?1:0;zz.typed=vv;ST.f=true;render()}}
  else if(a==='study0'){var q=cardsOf(R.s,R.t),n=Date.now(),due=q.filter(function(c){return c.reps&&c.due<=n}).sort(function(x,y){return x.due-y.due}),nw=q.filter(function(c){return!c.reps}).slice(0,S.nl||20);var Z=due.concat(nw),pr=0;if(!Z.length){Z=q.slice().sort(function(){return Math.random()-.5});pr=1}if(!Z.length){toast('No cards here yet');return}ST={q:Z,i:0,f:false,done:0,prac:pr,t0:Date.now(),cnt:[0,0,0,0]};render()}
@@ -321,7 +322,7 @@ document.addEventListener('click',function(e){
  else if(a==='wpok'){delImgs(cardsOf());S.subs=[];S.days={};S.seeded=0;seed();R={s:null,t:null};close();render(1);toast('Everything deleted')}
  else if(a==='bk')backup();
  else if(a==='dl'){getAllImgs(allImgIds(cardsOf()),function(m){try{var bl=new Blob([JSON.stringify({recall:2,data:S,imgs:m})],{type:'application/json'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download='recall-backup-'+dk(Date.now())+'.json';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);toast('Backup downloaded ('+Object.keys(m).length+' photos)')}catch(x){toast('Could not create the file')}})}
- else if(a==='imp'){var fi3=document.createElement('input');fi3.type='file';fi3.accept='.json,application/json';fi3.onchange=function(){var f=fi3.files&&fi3.files[0];if(!f)return;var fr=new FileReader();fr.onload=function(){try{var j=JSON.parse(fr.result),D=j&&j.data?j.data:j;if(!D||!Array.isArray(D.subs))throw 0;IMP={D:D,m:(j&&j.imgs)||{}}}catch(x){toast('That file is not a valid cards file');return}impSheet()};fr.readAsText(f)};fi3.click()}
+ else if(a==='imp'){pickFile('',function(f){readTextFile(f,function(t){try{var j=JSON.parse(t),D=j&&j.data?j.data:j;if(!D||!Array.isArray(D.subs))throw 0;IMP={D:D,m:(j&&j.imgs)||{}}}catch(x){toast('That file is not a valid cards file');return}impSheet()})})}
  else if(a==='impgo'){var sv=$('#is').value,tv=$('#it').value,sn=($('#isn').value||'').trim(),tn=($('#itn').value||'').trim();
   if(sv==='__new'&&!sn){toast('Type a name for the new subject');return}
   if(tv==='1'&&!tn){toast('Type a name for the topic');return}
@@ -330,7 +331,7 @@ document.addEventListener('click',function(e){
   putAllImgs(IMP.m,function(){var have={},added=0,upd=0;cardsOf().forEach(function(c){have[c.id]=c});
    IMP.D.subs.forEach(function(ns){var sb=tgt||gs(ns.name);(ns.topics||[]).forEach(function(nt){var tp=gt(sb,tv==='1'?tn:nt.name);(nt.cards||[]).forEach(function(c){var ex=have[c.id];if(ex){if(ex.q!==c.q||ex.a!==c.a||ex.qi!==c.qi||ex.ai!==c.ai||JSON.stringify(ex.o)!==JSON.stringify(c.o)){ex.q=c.q;ex.a=c.a;ex.o=c.o;ex.qi=c.qi;ex.ai=c.ai;upd++}return}have[c.id]=c;tp.cards.push(c);added++})})});
    if(tgt)tgt.last=Date.now();IMP=null;save();close();render();toast(added+' cards added'+(upd?' · '+upd+' updated':''))})}
- else if(a==='rf'){var fi2=document.createElement('input');fi2.type='file';fi2.accept='.json,application/json';fi2.onchange=function(){var f=fi2.files&&fi2.files[0];if(!f)return;var fr=new FileReader();fr.onload=function(){try{var j=JSON.parse(fr.result),D=j&&j.data?j.data:j,m=(j&&j.imgs)||{},np=Object.keys(m).length;if(!D||!Array.isArray(D.subs))throw 0;putAllImgs(m,function(){S=D;S.days=S.days||{};R={s:null,t:null};save();theme();close();render();toast('Restored'+(np?' with '+np+' photos':''))})}catch(x){toast('That file is not a valid backup')}};fr.readAsText(f)};fi2.click()}
+ else if(a==='rf'){pickFile('',function(f){readTextFile(f,function(t){try{var j=JSON.parse(t),D=j&&j.data?j.data:j,m=(j&&j.imgs)||{},np=Object.keys(m).length;if(!D||!Array.isArray(D.subs))throw 0;putAllImgs(m,function(){S=D;S.days=S.days||{};R={s:null,t:null};save();theme();close();render();toast('Restored'+(np?' with '+np+' photos':''))})}catch(x){toast('That file is not a valid backup')}})})}
  else if(a==='cp'){var ta=$('#f1');ta.select();try{navigator.clipboard.writeText(ta.value).then(function(){toast('Copied')},function(){document.execCommand('copy');toast('Copied')})}catch(x){try{document.execCommand('copy');toast('Copied')}catch(y){}}}
  else if(a==='rs'){try{var j=JSON.parse($('#f1').value);if(!j||!Array.isArray(j.subs))throw 0;S=j;S.days=S.days||{};R={s:null,t:null};save();theme();close();render();toast('Restored')}catch(x){toast('That text is not a valid backup')}}
 });
@@ -343,3 +344,4 @@ load();theme();render();
 </script>
 </body>
 </html>
+
