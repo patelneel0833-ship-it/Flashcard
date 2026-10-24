@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recall</title>
+<style>
+:root{--bg:#0b0b14;--s:rgba(255,255,255,.07);--b:rgba(255,255,255,.14);--t:#f2f1ff;--m:#a7a6c4;--a:#8b7cff;--a2:#37e6c8;--bad:#ff5d7a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html[data-t=ocean]{--bg:#041a24;--t:#e8f8ff;--m:#9bbccc;--a:#3fb6ff;--a2:#6bffb8}
+html[data-t=paper]{--bg:#f5f1e8;--s:rgba(0,0,0,.05);--b:rgba(0,0,0,.16);--t:#23201a;--m:#6a6455;--a:#b83c20;--a2:#1f6b5c;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto 0;height:260px;background:radial-gradient(60% 100% at 50% 0,var(--a),transparent);opacity:.18;pointer-events:none;z-index:-1}
+main{max-width:640px;margin:0 auto;padding:14px 16px 60px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;min-height:44px}
+:focus-visible{outline:3px solid var(--a2);outline-offset:2px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.logo{font-weight:800;font-size:1.4rem;letter-spacing:-.03em;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{background:var(--s);border:1px solid var(--b);border-radius:99px;padding:8px 14px;font-size:.88rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip.on{background:var(--a);color:#08080f;border-color:transparent;font-weight:700}
+.glass label{display:block;margin:12px 0 6px}.glass label:first-child{margin-top:0}
+.m{color:var(--m);font-size:.85rem}
+h1{font-size:1.5rem;margin:6px 0 14px;letter-spacing:-.02em}
+.glass{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:18px;margin-bottom:14px}
+.big{font-size:2.4rem;font-weight:800;line-height:1}
+.btn{display:block;width:100%;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,var(--a),var(--a2));color:#08080f;font-weight:700;text-align:center}
+.btn.g{background:var(--s);color:var(--t);border:1px solid var(--b);font-weight:600}
+.btn.r{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.4}
+.btn:active{transform:scale(.98)}
+.li{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:12px 14px;margin-bottom:8px;border-radius:16px;background:var(--s);border:1px solid var(--b)}
+.tx{flex:1;min-width:0}.tx>*{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{font-size:.75rem;padding:3px 10px;border-radius:99px;background:var(--a);color:#08080f;font-weight:700}
+.sec{font-size:.8rem;color:var(--m);text-transform:uppercase;letter-spacing:.1em;margin:20px 0 8px}
+.prog{height:6px;border-radius:9px;background:var(--b);overflow:hidden;margin-bottom:14px}.prog i{display:block;height:100%;background:var(--a2);transition:width .3s}
+.qa{min-height:230px;display:flex;flex-direction:column;justify-content:center;font-size:1.2rem;font-weight:600;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer}
+.qa hr{border:0;border-top:1px solid var(--b);width:100%;margin:18px 0}
+.qa .an{font-weight:400;color:var(--a2)}
+.rate{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rate button{padding:10px 2px;border-radius:14px;background:var(--s);border:1px solid var(--b);font-weight:700;font-size:.9rem}
+.rate small{display:block;color:var(--m);font-weight:400;font-size:.72rem}
+input,textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--b);background:var(--s);color:var(--t);font:inherit;margin:6px 0 12px;min-height:44px}
+textarea{min-height:150px;resize:vertical}
+label{font-size:.82rem;color:var(--m)}
+#sh{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:30;display:flex;align-items:flex-end;justify-content:center}
+#sIn{width:100%;max-width:640px;max-height:90vh;overflow:auto;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:var(--bg);border:1px solid var(--b)}
+#sIn h3{margin:0 0 10px}
+#sIn .btn{margin-top:8px}
+.hide{display:none!important}
+.cimg{display:block;max-width:100%;max-height:260px;margin:12px auto 0;border-radius:12px;object-fit:contain}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;margin-top:8px;border-radius:14px;background:var(--s);border:1px solid var(--b);overflow-wrap:anywhere}
+.opt:disabled{color:var(--t)}.opt.ok{border:2px solid var(--a2)}.opt.no{border:2px dashed var(--bad)}
+.selbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:8px;align-items:center;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--b)}
+.selbar .btn{margin:0;flex:1}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(20px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;z-index:40;padding:12px 14px;border-radius:14px;background:var(--t);color:var(--bg);text-align:center}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<div id="sh" class="hide" role="dialog" aria-modal="true"><div id="sIn"></div></div>
+<div id="toast" class="hide" role="status"></div>
+<script>
+(function(){
+'use strict';
+var KEY='recall2',S,R={s:null,t:null},ST=null,TT=0,SETV=0,ANA=0,PEND=null,SEL={on:0,ids:{}};
+var $=function(q){return document.querySelector(q)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+function sod(t){var d=new Date(t);d.setHours(0,0,0,0);return d.getTime()}
+function addDays(t,n){var d=new Date(sod(t));d.setDate(d.getDate()+n);return d.getTime()}
+function dk(t){var d=new Date(t);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function mk(q,a){return{id:uid(),q:q,a:a,ease:2.5,int:0,reps:0,due:0}}
+function toast(m){var t=$('#toast');t.textContent=m;t.className='';clearTimeout(TT);TT=setTimeout(function(){t.className='hide'},3500)}
+
+/* data */
+function load(){var raw=null;S=null;
+ try{raw=localStorage.getItem(KEY)}catch(e){}
+ if(raw){try{S=JSON.parse(raw);if(!S||!Array.isArray(S.subs))S=null}catch(e){S=null}}
+ if(!S){S={subs:[],theme:null,days:{}};
+  try{var o=JSON.parse(localStorage.getItem('recall1')||'null');if(o&&Array.isArray(o.decks))migrate(o)}catch(e){}
+  save()}
+ S.days=S.days||{};seed()}
+function seed(){if(S.seeded)return;var have={};S.subs.forEach(function(s){have[s.name.toLowerCase()]=1});
+ ['Anatomy','Physiology','Biochemistry','Community Medicine','Forensic Medicine','Pathology','Pharmacology','Microbiology','Medicine','Surgery','Obstetrics & Gynaecology','Pediatrics','Orthopaedics','ENT','Ophthalmology','Dermatology','Psychiatry','Anaesthesia','Radiology'].forEach(function(n){if(!have[n.toLowerCase()])S.subs.push({id:uid(),name:n,topics:[]})});
+ S.seeded=1;save()}
+function migrate(o){var by={};
+ o.decks.forEach(function(d){if(!d||d.name==='Welcome tour')return;
+  var n=String(d.subj||'General').trim()||'General',s=by[n];
+  if(!s){s=by[n]={id:uid(),name:n,topics:[]};S.subs.push(s)}
+  s.topics.push({id:uid(),name:String(d.name||'Untitled'),cards:(d.cards||[]).filter(function(c){return c&&c.q!=null}).map(function(c){
+   var k=mk(String(c.q),String(c.a==null?'':c.a));k.ease=+c.ease||2.5;k.int=+c.int||0;k.reps=+c.reps||0;k.due=+c.due>1e11?+c.due:0;return k})})})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Could not save. Storage may be blocked.')}}
+function theme(){var t=S.theme||(matchMedia('(prefers-color-scheme: light)').matches?'paper':'aurora');document.documentElement.setAttribute('data-t',t);document.documentElement.style.fontSize=(S.fs||100)+'%'}
+function sub(id){return S.subs.filter(function(s){return s.id===id})[0]}
+function top(s,id){return s&&s.topics.filter(function(t){return t.id===id})[0]}
+function cardsOf(sid,tid){var L=[];S.subs.forEach(function(a){if(sid&&a.id!==sid)return;a.topics.forEach(function(b){if(tid&&b.id!==tid)return;b.cards.forEach(function(c){L.push(c)})})});return L}
+function cnt(cs){var n=Date.now(),r={due:0,nw:0,n:cs.length};cs.forEach(function(c){if(!c.reps)r.nw++;else if(c.due<=n)r.due++});return r}
+function nlim(){return S.sn||S.nl||20}
+function todo(k){return k.due+Math.min(k.nw,S.nl||20)}
+function streak(){var s=0,t=Date.now();if(!S.days[dk(t)])t=addDays(t,-1);while(S.days[dk(t)]){s++;t=addDays(t,-1)}return s}
+
+/* scheduling */
+function rate(c,r){var n=Date.now(),i=c.int,V=S.iv||{};
+ if(r===0){c.ease=Math.max(1.3,c.ease-.2);c.int=0;c.due=n+(V.again||0)*6e4;return}
+ if(r===1){i=Math.max(1,Math.round(i*(V.hard||1.2)));c.ease=Math.max(1.3,c.ease-.15)}
+ else if(r===2){i=(!c.reps||!i)?(V.good||1):(i===1?3:Math.round(i*c.ease))}
+ else{i=(!c.reps||!i)?(V.easy||4):Math.round(i*c.ease*(V.eb||1.3));c.ease+=.15}
+ c.int=i;c.reps++;c.due=addDays(n,i)}
+function lab(c,r){if(r===0){var m=(S.iv||{}).again||0;return m?(m>=1440?Math.round(m/1440)+'d':m+'m'):'now'}var d=Object.assign({},c);rate(d,r);return d.int>=30?Math.round(d.int/30)+'mo':d.int+'d'}
+
+/* views */
+function bar(back,right){return'<div class="bar">'+(back?'<button class="chip" data-a="back">‹ Back</button>':'<span class="logo">Recall</span>')+'<span class="row">'+(right||'')+'</span></div>'}
+function ck(id){return SEL.on?'<span style="font-size:1.3rem">'+(SEL.ids[id]?'☑':'☐')+'</span>':''}
+function row(a,attrs,name,meta,pill,id){if(SEL.on)return'<button class="li" data-a="pick" data-i="'+id+'">'+ck(id)+'<span class="tx"><b>'+esc(name)+'</b><span class="m">'+meta+'</span></span></button>';return'<div class="li"><button class="tx" data-a="'+a+'" '+attrs+' style="text-align:left;min-height:44px;padding:0"><b>'+esc(name)+'</b><span class="m">'+meta+'</span></button>'+(pill?'<span class="pill">'+pill+'</span>':'')+'<button class="chip on" data-a="st" '+attrs+'>Start</button></div>'}
+function selChip(n){return n?'<button class="chip" data-a="sel">'+(SEL.on?'Done':'Select')+'</button>':''}
+function selBar(){var n=Object.keys(SEL.ids).length;return'<div class="selbar"><button class="chip" data-a="all">All</button><button class="chip" data-a="none">None</button><button class="btn r" data-a="delsel"'+(n?'':' disabled')+'>Delete'+(n?' ('+n+')':'')+'</button></div><div style="height:90px"></div>'}
+function selItems(){return R.t?top(sub(R.s),R.t).cards:R.s?sub(R.s).topics:S.subs}
+function studyBtn(k,label){var n=todo(k);if(!n)return'<button class="btn" data-a="study"'+(k.n?'':' disabled')+'>'+(k.n?'Revise all '+k.n+' card'+(k.n>1?'s':''):'No cards yet')+'</button>';return'<button class="btn" data-a="study">Study '+n+' card'+(n>1?'s':'')+'</button>'}
+function homeV(){var k=cnt(cardsOf()),t=S.days[dk(Date.now())]||0,st=streak();
+ var h=bar(0,selChip(S.subs.length)+'<button class="chip" data-a="ana" aria-label="Analysis">📊</button><button class="chip" data-a="menu" aria-label="Settings">⚙</button>');
+ h+='<div class="glass"><div class="big">'+todo(k)+'</div><div class="m" style="margin:6px 0 14px">to study today · '+t+' / '+(S.goal||50)+' done · '+(st?'🔥 '+st+'-day streak':'no streak yet')+'</div>'+studyBtn(k)+'</div>';
+ h+='<div class="sec">Subjects</div>';
+ if(!S.subs.length)h+='<p class="m">Add your subjects (Anatomy, Physiology…), then add topics inside each one.</p>';
+ subsSorted().forEach(function(s){var c=cnt(cardsOf(s.id));h+=row('go','data-s="'+s.id+'"',s.name,s.topics.length+' topics · '+c.n+' cards',c.due?c.due+' due':'',s.id)});
+ return h+(SEL.on?selBar():'<button class="btn g" data-a="add" data-k="sub">+ Add subjects</button>')}
+function subV(){var s=sub(R.s),k=cnt(cardsOf(s.id));
+ var h=bar(1,selChip(s.topics.length)+'<button class="chip" data-a="edit" data-k="sub">Rename</button>')+'<h1>'+esc(s.name)+'</h1>'+studyBtn(k,1)+'<div class="sec">Topics</div>';
+ if(!s.topics.length)h+='<p class="m">No topics yet. Add them one per line.</p>';
+ s.topics.forEach(function(t){var c=cnt(t.cards);h+=row('go','data-s="'+s.id+'" data-t="'+t.id+'"',t.name,c.n+' cards'+(c.nw?' · '+c.nw+' new':''),c.due?c.due+' due':'',t.id)});
+ return h+(SEL.on?selBar():'<button class="btn g" data-a="add" data-k="top">+ Add topics</button>')}
+function topicV(){var s=sub(R.s),t=top(s,R.t),k=cnt(t.cards),n=Date.now();
+ var h=bar(1,selChip(t.cards.length)+'<button class="chip" data-a="edit" data-k="top">Rename</button>')+'<div class="m">'+esc(s.name)+'</div><h1>'+esc(t.name)+'</h1>'+studyBtn(k,1)+'<div class="sec">'+t.cards.length+' cards</div>';
+ t.cards.slice(0,200).forEach(function(c){var st=!c.reps?'new':(c.due<=n?'due now':'next in '+Math.max(1,Math.ceil((c.due-n)/864e5))+'d');
+  h+='<button class="li" '+(SEL.on?'data-a="pick" data-i="'+c.id+'">'+ck(c.id):'data-a="ec" data-c="'+c.id+'">')+'<span class="tx"><span>'+(c.qi||c.ai?'🖼 ':'')+esc(c.q)+'</span><span class="m">'+st+'</span></span></button>'});
+ if(t.cards.length>200)h+='<p class="m">Showing the first 200 cards.</p>';
+ return h+(SEL.on?selBar():'<button class="btn g" data-a="add" data-k="card">+ Add cards</button>')}
+function studyV(){var q=ST.q,c=q[ST.i];
+ var h=bar(1,'<span class="m">'+Math.min(ST.i+1,q.length)+' / '+q.length+'</span>');
+ h=h.replace('‹ Back','‹ End');if(ST.prac)h+='<div class="m" style="margin-bottom:8px">Revision mode · your schedule is not changed</div>';
+ if(!c){ST.end=ST.end||Date.now();var sec=Math.max(1,Math.round((ST.end-ST.t0)/1000)),tm=sec>=60?Math.floor(sec/60)+'m '+(sec%60)+'s':sec+'s',NM=['Again','Hard','Good','Easy'],CL=['var(--bad)','#f5a524','var(--a)','var(--a2)'],tot=ST.cnt[0]+ST.cnt[1]+ST.cnt[2]+ST.cnt[3]||1;
+  var s2='<div class="glass" style="text-align:center"><div class="big">✓</div><h1 style="margin-bottom:4px">Session done</h1><div class="m">'+ST.done+' cards · '+tm+(ST.prac?' · revision':'')+'</div></div><div class="glass">';
+  NM.forEach(function(n,i){s2+='<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>'+n+'</span><b>'+ST.cnt[i]+'</b></div><div class="prog" style="margin-bottom:12px"><i style="width:'+(ST.cnt[i]/tot*100)+'%;background:'+CL[i]+'"></i></div>'});
+  return h+s2+'</div><button class="btn" data-a="back">Finish</button>'}
+ h+='<div class="prog"><i style="width:'+(ST.i/q.length*100)+'%"></i></div>';
+ var fm=ST.fmt||'flip',mc=fm==='mc'?mcFor(c):null,cz=fm==='cloze'?czFor(c):null,qs='<div style="font-weight:600;font-size:1.15rem;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(c.q)+'</div>'+im(c.qi);
+ if(mc){h+='<div class="glass">'+qs;
+  mc.opts.forEach(function(o,i){var cl='opt';if(ST.f){if(o===c.a)cl+=' ok';else if(mc.pick===i)cl+=' no'}h+='<button class="'+cl+'" data-a="opt" data-i="'+i+'"'+(ST.f?' disabled':'')+'>'+esc(o)+'</button>'});
+  h+='</div>';
+  if(!ST.f)return h+'<button class="btn g" data-a="flip">Show answer</button>';
+  if(c.ai)h+='<div class="glass">'+im(c.ai)+'</div>';if(mc.pick!=null)h+='<p class="m" style="text-align:center">'+(mc.opts[mc.pick]===c.a?'Correct ✓ Now rate how it felt':'Not quite. Now rate how it felt')+'</p>'}
+ else if(cz){h+='<div class="glass">'+qs+'<div style="margin-top:14px;font-size:1.05rem;color:var(--a2);white-space:pre-wrap;overflow-wrap:anywhere">'+esc(cz.masked)+'</div>';
+  if(!ST.f)return h+'<input id="cz" autocomplete="off" autocapitalize="off" placeholder="Type the missing part"><button class="btn" data-a="chk">Check</button></div><button class="btn g" data-a="flip">Show answer</button>';
+  h+='<hr style="border:0;border-top:1px solid var(--b);margin:14px 0"><div class="an" style="color:var(--a2)">'+esc(c.a)+'</div>'+im(c.ai)+(cz.res!=null?'<div class="m" style="margin-top:8px">'+(cz.res?'Correct ✓':'You typed: '+esc(cz.typed||'(nothing)'))+'</div>':'')+'</div>'}
+ else{h+='<div class="glass qa" data-a="flip"><div>'+esc(c.q)+im(c.qi)+'</div>'+(ST.f?'<hr><div class="an">'+esc(c.a)+im(c.ai)+'</div>':'')+'</div>'}
+ if(!ST.f)return h+'<button class="btn" data-a="flip">Show answer</button>';
+ h+='<div class="rate">';['Again','Hard','Good','Easy'].forEach(function(n,i){h+='<button data-a="rate" data-r="'+i+'">'+n+'<small>'+(ST.prac?'&nbsp;':lab(c,i))+'</small></button>'});
+ return h+'</div>'}
+function opt(a,v,cur,l){return'<button class="chip'+(cur===v?' on':'')+'" data-a="'+a+'" data-v="'+v+'">'+l+'</button>'}
+function setV(){var T=S.theme||(matchMedia('(prefers-color-scheme: light)').matches?'paper':'aurora'),fs=S.fs||100,nl=S.nl||20,g=S.goal||50,nt=0,nc=0;
+ S.subs.forEach(function(s){nt+=s.topics.length;s.topics.forEach(function(t){nc+=t.cards.length})});
+ var h=bar(1,'')+'<h1>Settings</h1>';
+ h+='<div class="sec">Appearance</div><div class="glass"><label>Theme</label><div class="row">'+opt('th','aurora',T,'Aurora')+opt('th','ocean',T,'Ocean')+opt('th','paper',T,'Paper')+'</div><label>Text size</label><div class="row">'+opt('fs',90,fs,'Small')+opt('fs',100,fs,'Normal')+opt('fs',115,fs,'Large')+opt('fs',130,fs,'Huge')+'</div></div>';
+ h+='<div class="sec">Study</div><div class="glass"><label>New cards per day</label><div class="row">'+[5,10,20,30,50,100].map(function(n){return opt('nl',n,nl,n)}).join('')+opt('nl',9999,nl,'All')+'</div><label>Daily goal (cards reviewed)</label><div class="row">'+[20,50,100,200].map(function(n){return opt('goal',n,g,n)}).join('')+'</div></div>';
+ var V=S.iv||{},D={again:0,hard:1.2,good:1,easy:4,eb:1.3},cv=function(k){return V[k]!=null?V[k]:D[k]},o2=function(k,L){return L.map(function(p){return'<button class="chip'+(cv(k)===p[0]?' on':'')+'" data-a="iv" data-k="'+k+'" data-v="'+p[0]+'">'+p[1]+'</button>'}).join('')};
+ h+='<div class="sec">Intervals</div><div class="glass"><label>Again: show again after</label><div class="row">'+o2('again',[[0,'Now'],[1,'1 min'],[10,'10 min'],[30,'30 min'],[1440,'1 day']])+'</div><label>Hard: multiply interval by</label><div class="row">'+o2('hard',[[1,'×1'],[1.2,'×1.2'],[1.5,'×1.5'],[2,'×2']])+'</div><label>Good: first interval</label><div class="row">'+o2('good',[[1,'1 day'],[2,'2 days'],[3,'3 days']])+'</div><label>Easy: first interval</label><div class="row">'+o2('easy',[[3,'3 days'],[4,'4 days'],[7,'7 days']])+'</div><label>Easy bonus (multiplier)</label><div class="row">'+o2('eb',[[1.3,'×1.3'],[1.5,'×1.5'],[2,'×2']])+'</div><p class="m">After the first review, Good grows the gap by each card’s ease. Changes apply to new reviews.</p><button class="chip" data-a="ivr">Reset to defaults</button></div>';
+ h+='<div class="sec">Data</div><button class="btn g" data-a="bk">Backup &amp; restore</button><button class="btn g" data-a="seedmore" style="margin-top:8px">Add missing default subjects</button><button class="btn g" data-a="rp" style="margin-top:8px">Reset study progress</button><button class="btn r" data-a="wp" style="margin-top:8px">Delete all data</button>';
+ return h+'<p class="m" style="margin-top:18px">'+S.subs.length+' subjects · '+nt+' topics · '+nc+' cards</p>'}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function norm(x){return String(x).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,'').replace(/\s+/g,' ').trim()}
+function oc(a,v,cur,l){return'<button class="chip'+(cur===v?' on':'')+'" data-a="'+a+'" data-v="'+v+'">'+l+'</button>'}
+function optSheet(){var q=cardsOf(PEND.s,PEND.t);if(!q.length){toast('No cards here yet');return}
+ var o=S.so||'rand',f=S.sf||'flip';
+ sheet('<h3>Start session</h3><label>Card order</label><div class="row">'+oc('so','rand',o,'Random')+oc('so','ord',o,'In order')+'</div><label>New cards this session</label><div class="row">'+oc('sn',0,S.sn||0,'Default ('+(S.nl>=9999?'all':(S.nl||20))+')')+[10,20,50,100].map(function(n){return oc('sn',n,S.sn||0,n)}).join('')+oc('sn',9999,S.sn||0,'All')+'</div><label>Format</label><div class="row">'+oc('sf','flip',f,'Flip')+oc('sf','mc',f,'Multiple choice')+oc('sf','cloze',f,'Fill in the blank')+'</div><p class="m">Multiple choice and fill-in-the-blank are made automatically from your cards.</p><button class="btn" data-a="begin">Start</button>'+X)}
+function mcFor(c){if(ST.mc&&ST.mc.id===c.id&&ST.mc.n===ST.i)return ST.mc;
+ var seen={},pool=[],add=function(L){L.forEach(function(x){if(x.a&&x.a!==c.a&&!seen[x.a]){seen[x.a]=1;pool.push(x.a)}})};
+ add(ST.q);if(pool.length<3)add(cardsOf());
+ var W=(c.o||[]).filter(function(x){return x&&x!==c.a});pool=shuf(pool.filter(function(x){return W.indexOf(x)<0}));while(W.length<3&&pool.length)W.push(pool.shift());if(!W.length)return null;
+ ST.mc={id:c.id,n:ST.i,opts:shuf(W.slice(0,5).concat([c.a])),pick:null};return ST.mc}
+function czFor(c){if(ST.cz&&ST.cz.id===c.id&&ST.cz.n===ST.i)return ST.cz;
+ var W=c.a.split(/\s+/),word=c.a,masked='_____';
+ if(W.length>2){var best=-1,bl=3;W.forEach(function(w,i){var l=w.replace(/[^\p{L}\p{N}]/gu,'').length;if(l>bl){bl=l;best=i}});
+  if(best>-1){word=W[best].replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');W[best]=W[best].replace(word,'_____');masked=W.join(' ')}}
+ ST.cz={id:c.id,n:ST.i,word:word,masked:masked,res:null};return ST.cz}
+function logT(){if(ST&&!ST.tl){ST.tl=1;var sec=Math.min(3600,Math.round(((ST.end||Date.now())-ST.t0)/1000));if(sec>0){var k=dk(Date.now()),tm=S.tm||(S.tm={});tm[k]=(tm[k]||0)+sec;save()}}}
+function fT(s){return s>=3600?Math.floor(s/3600)+'h '+Math.round(s%3600/60)+'m':Math.max(0,Math.round(s/60))+'m'}
+function bars(v,l){var mx=Math.max.apply(null,v.concat([1]));return'<div style="display:flex;align-items:flex-end;gap:4px">'+v.map(function(x,i){return'<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px"><span class="m" style="font-size:.65rem">'+(x||'')+'</span><div style="width:100%;border-radius:4px 4px 0 0;min-height:2px;background:var(--a2);height:'+Math.round(x/mx*70)+'px"></div><span class="m" style="font-size:.65rem">'+l[i]+'</span></div>'}).join('')+'</div>'}
+function seg(w,c){return w>0?'<i style="display:block;width:'+w+'%;background:'+c+'"></i>':''}
+function anaV(){var n=Date.now(),lab=[],rv=[],i,t,tm=0,rt7=0,all=cardsOf(),mat=0,yg=0,lr=0,nw=0,K=['Again','Hard','Good','Easy'],CL=['var(--bad)','#f5a524','var(--a)','var(--a2)'],rc=[0,0,0,0];
+ for(i=13;i>=0;i--){t=addDays(n,-i);lab.push('SMTWTFS'.charAt(new Date(t).getDay()));rv.push(S.days[dk(t)]||0);if(i<7){rt7+=S.days[dk(t)]||0;tm+=(S.tm||{})[dk(t)]||0}}
+ for(i=0;i<30;i++){var q=(S.rt||{})[dk(addDays(n,-i))];if(q)for(var j=0;j<4;j++)rc[j]+=q[j]}
+ all.forEach(function(c){if(!c.reps)nw++;else if(c.int>=21)mat++;else if(c.int>=1)yg++;else lr++});
+ var tot=all.length||1,rtot=rc[0]+rc[1]+rc[2]+rc[3];
+ var h=bar(1,'')+'<h1>Analysis</h1>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+[['🔥 '+streak(),'day streak'],[(S.days[dk(n)]||0)+' / '+(S.goal||50),'today'],[rt7,'reviews, 7 days'],[fT(tm),'study time, 7 days']].map(function(k){return'<div class="glass" style="margin:0;padding:14px"><div style="font-size:1.5rem;font-weight:800">'+k[0]+'</div><div class="m">'+k[1]+'</div></div>'}).join('')+'</div>';
+ h+='<div class="sec">Last 14 days</div><div class="glass">'+bars(rv,lab)+'</div>';
+ var f=[0,0,0,0,0,0,0],fl=[];all.forEach(function(c){if(c.reps){var d=Math.floor((sod(c.due)-sod(n))/864e5);if(d<0)d=0;if(d<7)f[d]++}});
+ for(i=0;i<7;i++)fl.push('SMTWTFS'.charAt(new Date(addDays(n,i)).getDay()));
+ h+='<div class="sec">Reviews coming up</div><div class="glass">'+bars(f,fl)+'<div class="m" style="margin-top:6px">Cards due each day, starting today</div></div>';
+ h+='<div class="sec">Recall, last 30 days</div><div class="glass">';
+ if(!rtot)h+='<div class="m">Appears after your next review sessions.</div>';
+ else{h+='<div style="font-size:1.5rem;font-weight:800">'+Math.round((rc[2]+rc[3])/rtot*100)+'%</div><div class="m" style="margin-bottom:10px">rated Good or Easy ('+rtot+' ratings)</div>';K.forEach(function(k,x){h+='<div style="display:flex;justify-content:space-between;font-size:.85rem"><span>'+k+'</span><b>'+rc[x]+'</b></div><div class="prog" style="margin-bottom:8px"><i style="width:'+(rc[x]/rtot*100)+'%;background:'+CL[x]+'"></i></div>'})}
+ h+='</div>';
+ h+='<div class="sec">Card maturity</div><div class="glass"><div style="display:flex;height:12px;border-radius:9px;overflow:hidden;background:var(--b)">'+seg(mat/tot*100,'var(--a2)')+seg(yg/tot*100,'var(--a)')+seg(lr/tot*100,'#f5a524')+'</div><div class="m" style="margin-top:10px;line-height:1.8"><span style="color:var(--a2)">●</span> Mature '+mat+' (21+ days) &nbsp; <span style="color:var(--a)">●</span> Young '+yg+' &nbsp; <span style="color:#f5a524">●</span> Learning '+lr+' &nbsp; ○ New '+nw+'</div></div>';
+ h+='<div class="sec">By subject</div>';
+ var any=0;subsSorted().forEach(function(s){var cs=cardsOf(s.id);if(!cs.length)return;any=1;var m=0,y=0,l=0;cs.forEach(function(c){if(c.reps){if(c.int>=21)m++;else if(c.int>=1)y++;else l++}});var T=cs.length,dd=cnt(cs).due;
+  h+='<div class="glass" style="padding:12px 14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px"><b>'+esc(s.name)+'</b><span class="m">'+Math.round((m+y)/T*100)+'% learned · '+T+' cards'+(dd?' · '+dd+' due':'')+'</span></div><div style="display:flex;height:8px;border-radius:9px;overflow:hidden;background:var(--b);margin-top:8px">'+seg(m/T*100,'var(--a2)')+seg(y/T*100,'var(--a)')+seg(l/T*100,'#f5a524')+'</div></div>'});
+ if(!any)h+='<p class="m">Add cards to see progress by subject.</p>';
+ var wk=[];S.subs.forEach(function(s){s.topics.forEach(function(tp){var r=tp.cards.filter(function(c){return c.reps});if(!r.length)return;var e=r.reduce(function(a,c){return a+c.ease},0)/r.length;if(e<2.45)wk.push({n:tp.name,s:s.name,e:e})})});
+ wk.sort(function(a,b){return a.e-b.e});
+ h+='<div class="sec">Needs more work</div>';
+ if(!wk.length)h+='<p class="m">Nothing weak yet. Topics show up here when you rate cards Again or Hard.</p>';
+ wk.slice(0,6).forEach(function(w){h+='<div class="li"><span class="tx"><b>'+esc(w.n)+'</b><span class="m">'+esc(w.s)+'</span></span><span class="pill" style="background:var(--bad);color:#fff">ease '+w.e.toFixed(1)+'</span></div>'});
+ return h}
+var DB=null;
+function idb(cb){if(DB)return cb(DB);try{var r=indexedDB.open('recall_img',1);r.onupgradeneeded=function(){r.result.createObjectStore('i')};r.onsuccess=function(){DB=r.result;cb(DB)};r.onerror=function(){cb(null)}}catch(e){cb(null)}}
+function putImg(id,u,cb){idb(function(d){if(!d)return cb(0);try{var t=d.transaction('i','readwrite');t.objectStore('i').put(u,id);t.oncomplete=function(){cb(1)};t.onerror=function(){cb(0)}}catch(e){cb(0)}})}
+function getImg(id,cb){idb(function(d){if(!d)return cb(null);try{var q=d.transaction('i').objectStore('i').get(id);q.onsuccess=function(){cb(q.result||null)};q.onerror=function(){cb(null)}}catch(e){cb(null)}})}
+function delImg(id){if(!id)return;idb(function(d){if(d)try{d.transaction('i','readwrite').objectStore('i').delete(id)}catch(e){}})}
+function shrink(file,cb){var fr=new FileReader();fr.onload=function(){var m=new Image();m.onload=function(){var s=Math.min(1,900/Math.max(m.width,m.height)),cv=document.createElement('canvas');cv.width=Math.round(m.width*s);cv.height=Math.round(m.height*s);cv.getContext('2d').drawImage(m,0,0,cv.width,cv.height);cb(cv.toDataURL('image/jpeg',.72))};m.onerror=function(){cb(null)};m.src=fr.result};fr.onerror=function(){cb(null)};fr.readAsDataURL(file)}
+function allImgIds(cs){var L=[];cs.forEach(function(c){if(c.qi)L.push(c.qi);if(c.ai)L.push(c.ai)});return L}
+function delImgs(cs){allImgIds(cs).forEach(delImg)}
+function getAllImgs(ids,cb){var out={},n=ids.length;if(!n)return cb(out);ids.forEach(function(id){getImg(id,function(u){if(u)out[id]=u;if(--n===0)cb(out)})})}
+function putAllImgs(m,cb){var ids=Object.keys(m),n=ids.length;if(!n)return cb();ids.forEach(function(id){putImg(id,m[id],function(){if(--n===0)cb()})})}
+function im(id){return id?'<img data-im="'+id+'" class="cimg" alt="">':''}
+function fillImgs(){document.querySelectorAll('img[data-im]').forEach(function(m){getImg(m.dataset.im,function(u){if(u)m.src=u;else m.style.display='none'})})}
+function subsSorted(){return S.subs.slice().sort(function(a,b){var x=a.last||0,y=b.last||0;if(x!==y)return y-x;return a.name.localeCompare(b.name)})}
+function touch(id){var s=sub(id);if(s){s.last=Date.now();save()}}
+function render(k){$('#app').innerHTML=SETV?setV():ANA?anaV():ST?studyV():R.t?topicV():R.s?subV():homeV();if(!k)window.scrollTo(0,0);fillImgs()}
+
+/* sheets */
+function sheet(h){$('#sIn').innerHTML=h;$('#sh').classList.remove('hide');fillImgs();var f=$('#sIn textarea,#sIn input');if(f)setTimeout(function(){f.focus()},60)}
+function close(){$('#sh').classList.add('hide')}
+var X='<button class="btn g" data-a="x">Cancel</button>';
+function addSheet(k){
+ if(k==='card')return sheet('<h3>Add cards</h3><label>One card per line: question | answer | wrong option | wrong option | …<br>Wrong options are optional and are used in multiple choice. Excel or Anki paste also works.</label><textarea id="f1" placeholder="Nerve supply of deltoid | Axillary nerve | Radial nerve | Musculocutaneous nerve | Ulnar nerve"></textarea><button class="btn" data-a="ok" data-k="card">Add</button>'+X);
+ sheet('<h3>Add '+(k==='sub'?'subjects':'topics')+'</h3><label>One per line</label><textarea id="f1" placeholder="'+(k==='sub'?'Anatomy\nPhysiology\nBiochemistry':'Upper limb\nLower limb\nThorax')+'"></textarea><button class="btn" data-a="ok" data-k="'+k+'">Add</button>'+X)}
+function editSheet(k){var o=k==='sub'?sub(R.s):top(sub(R.s),R.t);
+ sheet('<h3>Rename</h3><input id="f1" value="'+esc(o.name)+'"><button class="btn" data-a="ok" data-k="ren'+k+'">Save</button><button class="btn r" data-a="del" data-k="'+k+'">Delete '+(k==='sub'?'subject':'topic')+'</button>'+X)}
+function ok(k){var v=$('#f1').value,L=v.split('\n').map(function(x){return x.trim()}).filter(Boolean),s=sub(R.s);
+ if(k==='sub'){L.forEach(function(n){S.subs.push({id:uid(),name:n,topics:[]})})}
+ else if(k==='top'){L.forEach(function(n){s.topics.push({id:uid(),name:n,cards:[]})})}
+ else if(k==='card'){var t=top(s,R.t),a=0,bad=0;
+  L.forEach(function(l){var P=l.indexOf('\t')>-1?l.split('\t'):l.split('|'),q=(P[0]||'').trim(),an=(P[1]||'').trim(),op=P.slice(2).map(function(x){return x.trim()}).filter(Boolean);if(q&&an){var nc=mk(q,an);if(op.length)nc.o=op;t.cards.push(nc);a++}else bad++});
+  toast(a+' added'+(bad?' · '+bad+' skipped (need "question | answer")':''))}
+ else if(k==='rensub'){if(v.trim())s.name=v.trim()}
+ else if(k==='rentop'){if(v.trim())top(s,R.t).name=v.trim()}
+ else if(k==='ecs'){var c=findC(EC);if(c){c.q=$('#f1').value.trim()||c.q;c.a=$('#f2').value.trim()||c.a;c.o=$('#f3').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)}}
+ save();close();render()}
+var IMP=null;
+function impSheet(){var tot=0;IMP.D.subs.forEach(function(z){(z.topics||[]).forEach(function(t){tot+=(t.cards||[]).length})});
+ var o='<option value="">As in the file ('+esc(IMP.D.subs.map(function(z){return z.name}).join(', '))+')</option>'+S.subs.map(function(z){return'<option value="'+z.id+'"'+(z.id===R.s?' selected':'')+'>'+esc(z.name)+'</option>'}).join('')+'<option value="__new">+ New subject…</option>';
+ sheet('<h3>Where should these go?</h3><p class="m">'+tot+' cards ready to import.</p><label>Subject</label><select id="is">'+o+'</select><input id="isn" placeholder="New subject name" style="display:none"><label>Topic</label><select id="it"><option value="">Keep the topics from the file</option><option value="1">Put all in one topic…</option></select><input id="itn" list="itl" placeholder="Topic name" style="display:none"><datalist id="itl"></datalist><button class="btn" data-a="impgo">Import</button>'+X);
+ if(R.s&&R.t){var tt=top(sub(R.s),R.t);if(tt){$('#it').value='1';$('#itn').value=tt.name}}
+ impSync()}
+function impSync(){var sv=$('#is').value,z=sv&&sv!=='__new'?sub(sv):null;$('#isn').style.display=sv==='__new'?'block':'none';$('#itn').style.display=$('#it').value==='1'?'block':'none';$('#itl').innerHTML=z?z.topics.map(function(t){return'<option value="'+esc(t.name)+'">'}).join(''):''}
+document.addEventListener('change',function(e){if(e.target.id==='is'||e.target.id==='it')impSync()});
+var EC=null;
+function findC(id){var r=null;S.subs.forEach(function(s){s.topics.forEach(function(t){t.cards.forEach(function(c){if(c.id===id)r=c})})});return r}
+function cardSheet(id){var c=findC(id);if(!c)return;EC=id;
+ sheet('<h3>Edit card</h3><label>Question</label><textarea id="f1" style="min-height:90px">'+esc(c.q)+'</textarea><label>Answer</label><textarea id="f2" style="min-height:110px">'+esc(c.a)+'</textarea><label>Wrong options for multiple choice (one per line)</label><textarea id="f3" style="min-height:90px">'+esc((c.o||[]).join('\n'))+'</textarea><label>Question image</label>'+im(c.qi)+'<div class="row" style="margin:6px 0 12px"><button class="chip" data-a="pic" data-w="q">'+(c.qi?'Change photo':'Add photo')+'</button>'+(c.qi?'<button class="chip" data-a="rmpic" data-w="q">Remove</button>':'')+'</div><label>Answer image</label>'+im(c.ai)+'<div class="row" style="margin:6px 0 12px"><button class="chip" data-a="pic" data-w="a">'+(c.ai?'Change photo':'Add photo')+'</button>'+(c.ai?'<button class="chip" data-a="rmpic" data-w="a">Remove</button>':'')+'</div><button class="btn" data-a="ok" data-k="ecs">Save</button><button class="btn r" data-a="del" data-k="card">Delete card</button>'+X)}
+function menu(){sheet('<h3>Settings</h3><div class="row" style="margin-bottom:10px"><button class="chip" data-a="th" data-v="aurora">Aurora</button><button class="chip" data-a="th" data-v="ocean">Ocean</button><button class="chip" data-a="th" data-v="paper">Paper</button></div><button class="btn g" data-a="bk">Backup &amp; restore</button>'+X)}
+function backup(){sheet('<h3>Backup &amp; restore</h3><button class="btn" data-a="dl">Download backup file (with photos)</button><button class="btn g" data-a="imp" style="margin-top:8px">Import cards file (adds to your data)</button><button class="btn g" data-a="rf" style="margin-top:8px">Restore from file</button><label style="margin-top:16px">Text-only backup (no photos). To restore, paste a backup here and tap Restore.</label><textarea id="f1">'+esc(JSON.stringify(S))+'</textarea><button class="btn" data-a="cp">Copy</button><button class="btn g" data-a="rs">Restore from this text</button>'+X)}
+
+/* events */
+document.addEventListener('click',function(e){
+ var el=e.target.closest('[data-a]');if(!el){if(e.target.id==='sh')close();return}
+ var a=el.dataset.a,d=el.dataset;
+ if(a==='go'||a==='back'||a==='study')SEL={on:0,ids:{}};
+ if(a==='go'){R.s=d.s;R.t=d.t||null;touch(d.s);render()}
+ else if(a==='back'){if(SETV)SETV=0;else if(ANA)ANA=0;else if(ST){logT();if(ST.ret)R=ST.ret;ST=null}else if(R.t)R.t=null;else R.s=null;render()}
+ else if(a==='study'||a==='st'){PEND={s:a==='st'?d.s:R.s,t:a==='st'?(d.t||null):R.t,ret:a==='st'?{s:R.s,t:R.t}:null};optSheet()}
+ else if(a==='so'||a==='sf'){S[a]=d.v;save();optSheet()}
+ else if(a==='sn'){S.sn=+d.v;save();optSheet()}
+ else if(a==='begin'){close();var P=PEND,qa=cardsOf(P.s,P.t),nb=Date.now(),dueA=qa.filter(function(c){return c.reps&&c.due<=nb}),nwA=qa.filter(function(c){return!c.reps}).slice(0,nlim()),ids={},prx=0;
+  dueA.concat(nwA).forEach(function(c){ids[c.id]=1});var ZZ=qa.filter(function(c){return ids[c.id]});
+  if(!ZZ.length){ZZ=qa.slice();prx=1}
+  if(!ZZ.length){toast('No cards here yet');return}
+  if((S.so||'rand')!=='ord')ZZ=shuf(ZZ);
+  if(P.s)touch(P.s);if(P.ret){R.s=P.s;R.t=P.t}
+  ST={q:ZZ,i:0,f:false,done:0,prac:prx,t0:Date.now(),cnt:[0,0,0,0],ret:P.ret,fmt:S.sf||'flip'};render()}
+ else if(a==='pic'||a==='rmpic'){var cc=findC(EC),w=d.w;if(!cc)return;
+  cc.q=$('#f1').value.trim()||cc.q;cc.a=$('#f2').value.trim()||cc.a;cc.o=$('#f3').value.split('\n').map(function(x){return x.trim()}).filter(Boolean);
+  if(a==='rmpic'){delImg(cc[w+'i']);delete cc[w+'i'];save();cardSheet(EC);return}
+  var fi=document.createElement('input');fi.type='file';fi.accept='image/*';
+  fi.onchange=function(){var fl=fi.files&&fi.files[0];if(!fl)return;shrink(fl,function(u){if(!u){toast('Could not read that image');return}var id=cc[w+'i']||uid();putImg(id,u,function(okk){if(!okk){toast('Could not save the image in this browser');return}cc[w+'i']=id;save();cardSheet(EC)})})};fi.click()}
+ else if(a==='opt'){if(ST.mc){ST.mc.pick=+d.i;ST.f=true;render()}}
+ else if(a==='chk'){var zz=ST.cz,vv=($('#cz')||{}).value||'';if(zz){zz.res=norm(vv)===norm(zz.word)?1:0;zz.typed=vv;ST.f=true;render()}}
+ else if(a==='study0'){var q=cardsOf(R.s,R.t),n=Date.now(),due=q.filter(function(c){return c.reps&&c.due<=n}).sort(function(x,y){return x.due-y.due}),nw=q.filter(function(c){return!c.reps}).slice(0,S.nl||20);var Z=due.concat(nw),pr=0;if(!Z.length){Z=q.slice().sort(function(){return Math.random()-.5});pr=1}if(!Z.length){toast('No cards here yet');return}ST={q:Z,i:0,f:false,done:0,prac:pr,t0:Date.now(),cnt:[0,0,0,0]};render()}
+ else if(a==='flip'){if(ST&&ST.q[ST.i]){ST.f=!ST.f;render()}}
+ else if(a==='rate'){var c=ST.q[ST.i],r=+d.r;var k=dk(Date.now()),id=c.id,fl=ST.fl||(ST.fl={}),was=fl[id];if(!ST.prac){if(!(r>=2&&was===1))rate(c,r);S.days[k]=(S.days[k]||0)+1;var rt=S.rt||(S.rt={});(rt[k]=rt[k]||[0,0,0,0])[r]++}ST.cnt[r]++;if(r<2){fl[id]=(was===0||r===0)?0:1;ST.q.splice(Math.min(ST.i+1+(r===0?3:6),ST.q.length),0,c)}else{delete fl[id];ST.done++}ST.i++;ST.f=false;save();render()}
+ else if(a==='add')addSheet(d.k);
+ else if(a==='edit')editSheet(d.k);
+ else if(a==='ec')cardSheet(d.c);
+ else if(a==='ok')ok(d.k);
+ else if(a==='del'){if(!el.dataset.sure){el.dataset.sure=1;el.textContent='Tap again to delete';return}
+  if(d.k==='card'){delImgs([findC(EC)||{}]);S.subs.forEach(function(s){s.topics.forEach(function(t){t.cards=t.cards.filter(function(c){return c.id!==EC})})})}
+  else if(d.k==='top'){delImgs((top(sub(R.s),R.t)||{cards:[]}).cards);sub(R.s).topics=sub(R.s).topics.filter(function(t){return t.id!==R.t});R.t=null}
+  else{delImgs(cardsOf(R.s));S.subs=S.subs.filter(function(s){return s.id!==R.s});R.s=null;R.t=null}
+  save();close();render()}
+ else if(a==='st0'){var ret={s:R.s,t:R.t};R.s=d.s;R.t=d.t||null;var q2=cardsOf(R.s,R.t),n2=Date.now(),du=q2.filter(function(c){return c.reps&&c.due<=n2}).sort(function(x,y){return x.due-y.due}),nw2=q2.filter(function(c){return!c.reps}).slice(0,S.nl||20);var Z2=du.concat(nw2),pr2=0;if(!Z2.length){Z2=q2.slice().sort(function(){return Math.random()-.5});pr2=1}if(!Z2.length){R=ret;toast('No cards here yet');return}ST={q:Z2,i:0,f:false,done:0,ret:ret,prac:pr2,t0:Date.now(),cnt:[0,0,0,0]};render()}
+ else if(a==='sel'){SEL={on:SEL.on?0:1,ids:{}};render()}
+ else if(a==='pick'){if(SEL.ids[d.i])delete SEL.ids[d.i];else SEL.ids[d.i]=1;var y=window.scrollY;render();window.scrollTo(0,y)}
+ else if(a==='all'||a==='none'){SEL.ids={};if(a==='all')selItems().forEach(function(o){SEL.ids[o.id]=1});var y2=window.scrollY;render();window.scrollTo(0,y2)}
+ else if(a==='delsel'){var n=Object.keys(SEL.ids).length;sheet('<h3>Delete '+n+' '+(R.t?'card':R.s?'topic':'subject')+(n>1?'s':'')+'?</h3><p class="m">'+(R.t?'':'Everything inside will be deleted too. ')+'This can’t be undone.</p><button class="btn r" data-a="delok">Delete</button>'+X)}
+ else if(a==='delok'){var I=SEL.ids,keep=function(o){return!I[o.id]};if(R.t){var tt=top(sub(R.s),R.t);delImgs(tt.cards.filter(function(o){return I[o.id]}));tt.cards=tt.cards.filter(keep)}else if(R.s){var ss=sub(R.s);ss.topics.forEach(function(o){if(I[o.id])delImgs(o.cards)});ss.topics=ss.topics.filter(keep)}else{S.subs.forEach(function(o){if(I[o.id])o.topics.forEach(function(t){delImgs(t.cards)})});S.subs=S.subs.filter(keep)}SEL={on:0,ids:{}};save();close();render();toast('Deleted')}
+ else if(a==='x')close();
+ else if(a==='ana'){ANA=1;render()}
+ else if(a==='menu'){SETV=1;render()}
+ else if(a==='th'){S.theme=d.v;save();theme();render(1)}
+ else if(a==='fs'){S.fs=+d.v;save();theme();render(1)}
+ else if(a==='nl'){S.nl=+d.v;save();render(1)}
+ else if(a==='goal'){S.goal=+d.v;save();render(1)}
+ else if(a==='seedmore'){S.seeded=0;seed();toast('Default subjects added');render(1)}
+ else if(a==='iv'){S.iv=S.iv||{};S.iv[d.k]=+d.v;save();render(1)}
+ else if(a==='ivr'){S.iv={};save();render(1)}
+ else if(a==='rp'){sheet('<h3>Reset study progress?</h3><p class="m">Every card becomes new again and your streak is cleared. Cards are kept.</p><button class="btn r" data-a="rpok">Reset progress</button>'+X)}
+ else if(a==='rpok'){cardsOf().forEach(function(c){c.reps=0;c.int=0;c.ease=2.5;c.due=0});S.days={};S.rt={};S.tm={};save();close();render(1);toast('Progress reset')}
+ else if(a==='wp'){sheet('<h3>Delete all data?</h3><p class="m">All subjects, topics and cards are removed. The 19 default subjects come back empty. This can’t be undone.</p><button class="btn r" data-a="wpok">Delete everything</button>'+X)}
+ else if(a==='wpok'){delImgs(cardsOf());S.subs=[];S.days={};S.seeded=0;seed();R={s:null,t:null};close();render(1);toast('Everything deleted')}
+ else if(a==='bk')backup();
+ else if(a==='dl'){getAllImgs(allImgIds(cardsOf()),function(m){try{var bl=new Blob([JSON.stringify({recall:2,data:S,imgs:m})],{type:'application/json'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download='recall-backup-'+dk(Date.now())+'.json';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);toast('Backup downloaded ('+Object.keys(m).length+' photos)')}catch(x){toast('Could not create the file')}})}
+ else if(a==='imp'){var fi3=document.createElement('input');fi3.type='file';fi3.accept='.json,application/json';fi3.onchange=function(){var f=fi3.files&&fi3.files[0];if(!f)return;var fr=new FileReader();fr.onload=function(){try{var j=JSON.parse(fr.result),D=j&&j.data?j.data:j;if(!D||!Array.isArray(D.subs))throw 0;IMP={D:D,m:(j&&j.imgs)||{}}}catch(x){toast('That file is not a valid cards file');return}impSheet()};fr.readAsText(f)};fi3.click()}
+ else if(a==='impgo'){var sv=$('#is').value,tv=$('#it').value,sn=($('#isn').value||'').trim(),tn=($('#itn').value||'').trim();
+  if(sv==='__new'&&!sn){toast('Type a name for the new subject');return}
+  if(tv==='1'&&!tn){toast('Type a name for the topic');return}
+  var nm=function(x){return String(x).toLowerCase()},gs=function(n){var z=S.subs.filter(function(x){return nm(x.name)===nm(n)})[0];if(!z){z={id:uid(),name:n,topics:[]};S.subs.push(z)}return z},gt=function(z,n){var u=z.topics.filter(function(x){return nm(x.name)===nm(n)})[0];if(!u){u={id:uid(),name:n,cards:[]};z.topics.push(u)}return u};
+  var tgt=sv==='__new'?gs(sn):(sv?sub(sv):null);
+  putAllImgs(IMP.m,function(){var have={},added=0,upd=0;cardsOf().forEach(function(c){have[c.id]=c});
+   IMP.D.subs.forEach(function(ns){var sb=tgt||gs(ns.name);(ns.topics||[]).forEach(function(nt){var tp=gt(sb,tv==='1'?tn:nt.name);(nt.cards||[]).forEach(function(c){var ex=have[c.id];if(ex){if(ex.q!==c.q||ex.a!==c.a||ex.qi!==c.qi||ex.ai!==c.ai||JSON.stringify(ex.o)!==JSON.stringify(c.o)){ex.q=c.q;ex.a=c.a;ex.o=c.o;ex.qi=c.qi;ex.ai=c.ai;upd++}return}have[c.id]=c;tp.cards.push(c);added++})})});
+   if(tgt)tgt.last=Date.now();IMP=null;save();close();render();toast(added+' cards added'+(upd?' · '+upd+' updated':''))})}
+ else if(a==='rf'){var fi2=document.createElement('input');fi2.type='file';fi2.accept='.json,application/json';fi2.onchange=function(){var f=fi2.files&&fi2.files[0];if(!f)return;var fr=new FileReader();fr.onload=function(){try{var j=JSON.parse(fr.result),D=j&&j.data?j.data:j,m=(j&&j.imgs)||{},np=Object.keys(m).length;if(!D||!Array.isArray(D.subs))throw 0;putAllImgs(m,function(){S=D;S.days=S.days||{};R={s:null,t:null};save();theme();close();render();toast('Restored'+(np?' with '+np+' photos':''))})}catch(x){toast('That file is not a valid backup')}};fr.readAsText(f)};fi2.click()}
+ else if(a==='cp'){var ta=$('#f1');ta.select();try{navigator.clipboard.writeText(ta.value).then(function(){toast('Copied')},function(){document.execCommand('copy');toast('Copied')})}catch(x){try{document.execCommand('copy');toast('Copied')}catch(y){}}}
+ else if(a==='rs'){try{var j=JSON.parse($('#f1').value);if(!j||!Array.isArray(j.subs))throw 0;S=j;S.days=S.days||{};R={s:null,t:null};save();theme();close();render();toast('Restored')}catch(x){toast('That text is not a valid backup')}}
+});
+document.addEventListener('keydown',function(e){if(!ST||!$('#sh').classList.contains('hide')||/INPUT|TEXTAREA/.test(e.target.tagName))return;
+ if(e.key===' '&&!ST.f&&ST.q[ST.i]){e.preventDefault();ST.f=true;render()}
+ else if(ST.f&&'1234'.indexOf(e.key)>-1&&e.key){var b=document.querySelector('[data-r="'+(+e.key-1)+'"]');if(b)b.click()}});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='cz'){var b=document.querySelector('[data-a="chk"]');if(b)b.click()}});
+load();theme();render();
+})();
+</script>
+</body>
+</html>
